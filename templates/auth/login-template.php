@@ -25,7 +25,7 @@
 
     <form method="post" class="form-control mt-5 p-4" 
           style="width:380px; box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
-                 rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;">
+                 rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;" action="dashoard.php">
         <div class="text-center mb-3">
             <!-- <i class="fa fa-user-circle-o fa-3x" style="color: green;"></i> -->
             <h5 class="p-2" style="font-weight: 700;">Login</h5>
