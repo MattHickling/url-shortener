@@ -11,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($password === $confirmPassword) {
         // Prepare and execute
-        $stmt = $conn->prepare("UPDATE userdata SET password = ? WHERE email = ?");
+        $stmt = $conn->prepare("UPDATE users SET password = ? WHERE email = ?");
         $stmt->bind_param("ss", $password, $email);
 
         if ($stmt->execute()) {
@@ -40,16 +40,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" 
           content="width=device-width, 
                    initial-scale=1.0">
-    <link href=
-"https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href=
-"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
-    <link rel="shortcut icon" href=
-"https://cdn-icons-png.flaticon.com/512/295/295128.png">
-    <script src=
-"https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src=
-"https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="../public/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../public/assets/css/font-awesome.css">
+    <link rel="stylesheet" href="../public/assets/css/login.css">
     <title>Reset Password</title>
 </head>
 
@@ -75,27 +68,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             style="height:auto; width:380px; box-shadow: rgba(60, 64, 67, 0.3) 
             0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;">
             <div class="row">
-                <i class="fa fa-user-circle-o fa-3x mt-1 mb-2" 
-          style="text-align: center; color: green;"></i>
+                
                 <h5 class="text-center p-4" style="font-weight: 700;">
           Change Your Password</h5>
             </div>
             <div class="col-mb-3 position-relative">
-                <label for="email"><i class="fa fa-envelope"></i> Email</label>
+                <label for="email"> Email</label>
                 <input type="text" name="email" id="email" 
                   class="form-control" required>
                 <span id="email-check" class="position-absolute"
                     style="right: 10px; top: 50%; transform: translateY(-50%);"></span>
             </div>
             <div class="col mb-3 mt-3">
-                <label for="password"><i class="fa fa-lock"></i> 
+                <label for="password">
                   Password</label>
                 <input type="text" name="password"
                   id="password" class="form-control" required>
             </div>
             <div class="col mb-3 mt-3">
-                <label for="confirm_password"><i 
-                  class="fa fa-lock"></i> Confirm Password</label>
+                <label for="confirm_password">Confirm Password</label>
                 <input type="text" name="confirm_password" 
                   id="confirm_password"
                   class="form-control" required>
@@ -114,6 +105,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         </form>
     </div>
+    <script src="../public/assets/js/jquery-3.6.0.min.js"></script>
+    <script src="../public/assets/js/bootstrap.bundle.min.js"></script>
     <script>
         $(document).ready(function () {
             $('#email').on('blur', function () {

@@ -9,16 +9,11 @@ use Src\Auth\AuthService;
 
 $user = new User($conn);
 $auth = new AuthService($user);
-
-$error = '';
+$message = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $result = $auth->login($_POST['email'], $_POST['password']);
-    if ($result['success']) {
-        header('Location: dashboard.php');
-        exit();
-    }
-    $error = $result['message'];
+    $result = $auth->forgotPassword($_POST['email'], $_POST['new_password']);
+    $message = $result['message'];
 }
 
-include '../templates/auth/login-template.php';
+include '../templates/auth/forgot-password-template.php';

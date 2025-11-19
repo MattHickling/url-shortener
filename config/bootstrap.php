@@ -1,7 +1,7 @@
 <?php
 
-
 require_once('../vendor/autoload.php');
+
 use Dotenv\Dotenv;
 
 $dotenv = Dotenv::createImmutable(__DIR__ . '/..'); 
@@ -12,10 +12,11 @@ $USERNAME = $_ENV['DB_USERNAME'];
 $PASSWORD = $_ENV['DB_PASSWORD'];
 $DB_NAME = $_ENV['DB_DATABASE'];
 
-$conn = mysqli_connect("$HOSTNAME", "$USERNAME", "$PASSWORD", "$DB_NAME"); 
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-if(!$conn){
-    die(mysqli_error($conn));
-} 
-
-?>
+try {
+    $conn = new mysqli($HOSTNAME, $USERNAME, $PASSWORD, $DB_NAME);
+    $conn->set_charset('utf8mb4'); 
+} catch (\mysqli_sql_exception $e) {
+    die("Database connection failed: " . $e->getMessage());
+}
