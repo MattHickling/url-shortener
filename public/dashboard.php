@@ -17,10 +17,8 @@ $user = new User($conn);
 $currentUser = $user->getUsername($email);
 
 $urlService = new Url($conn);
-$userData = $urlService->getByEmail($email);
+$userData = $user->getByEmail($email); 
 $userId = $userData['id'] ?? null;
-
-
 
 ?>
 
@@ -41,7 +39,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $result = $urlService->create($userId, $originalUrl);
             echo '<p>' . htmlspecialchars($result['message']) . '</p>';
             if (!empty($result['short_code'])) {
-                echo '<p>Short URL code: <strong>' . htmlspecialchars($result['short_code']) . '</strong></p>';
+                $result = $urlService->create($userId, $originalUrl);
+                if ($result['success']) {
+                    echo "Short URL: <a href='https://my-url/r.php?code=" . htmlspecialchars($result['short_code']) . "' target='_blank'>https://my-url/r.php?code=" . htmlspecialchars($result['short_code']) . "</a>";
+                }
+
             }
         } else {
             echo '<p>Invalid URL. Please enter a valid URL.</p>';

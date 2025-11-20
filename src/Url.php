@@ -13,13 +13,17 @@ class Url {
     public function create(int $userId, string $originalUrl): array {
         $createdAt = Carbon::now()->toDateTimeString();
 
+        $shortCode = $this->generateShortCode();
+
         $stmt = $this->conn->prepare(
-            "INSERT INTO urls (user_id, original_url, created_at) VALUES (?, ?, ?)"
+            "INSERT INTO urls (user_id, original_url, short_code, created_at) VALUES (?, ?, ?, ?)"
         );
+
         if (!$stmt) {
             return ['success' => false, 'message' => 'Failed to prepare statement'];
         }
-        $stmt->bind_param("iss", $userId, $originalUrl, $createdAt);
+
+        $stmt->bind_param("isss", $userId, $originalUrl, $shortCode, $createdAt);
 
         if (!$stmt->execute()) {
             $stmt->close();
@@ -28,8 +32,6 @@ class Url {
 
         $stmt->close();
 
-        $shortCode = $this->generateShortCode($originalUrl);
-
         return [
             'success' => true,
             'message' => 'URL shortened successfully',
@@ -37,43 +39,19 @@ class Url {
         ];
     }
 
-    public function generateShortCode(string $originalUrl): string {
-        $stmt = $this->conn->prepare("SELECT short_code FROM urls WHERE original_url = ?");
-        $stmt->bind_param("s", $originalUrl);
-        $stmt->execute();
-        $result = $stmt->get_result()->fetch_assoc();
-        $stmt->close();
+    private function generateShortCode(int $length = 6): string {
+        do {
+            $shortCode = substr(md5(uniqid(rand(), true)), 0, $length);
 
-        if ($result && !empty($result['short_code'])) {
-            return $result['short_code'];
-        }
-        $shortCode = substr(md5(uniqid($originalUrl, true)), 0, 6);
-
-        $stmt = $this->conn->prepare("UPDATE urls SET short_code = ? WHERE original_url = ?");
-        $stmt->bind_param("ss", $shortCode, $originalUrl);
-        $stmt->execute();
-        $stmt->close();
+            $stmt = $this->conn->prepare("SELECT id FROM urls WHERE short_code = ? LIMIT 1");
+            $stmt->bind_param("s", $shortCode);
+            $stmt->execute();
+            $stmt->store_result();
+            $exists = $stmt->num_rows > 0;
+            $stmt->close();
+        } while ($exists);
 
         return $shortCode;
     }
 
-
-    public function getByEmail($email) {
-        $stmt = $this->conn->prepare("SELECT * FROM users WHERE email = ?");
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $result = $stmt->get_result()->fetch_assoc();
-        $stmt->close();
-        return $result ?: null;
-    }
-
-    public function getUserFromUrl($email) {
-        $stmt = $this->conn->prepare("SELECT username FROM users WHERE email = ?");
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $stmt->bind_result($username);
-        $stmt->fetch();
-        $stmt->close();
-        return $username;
-    }
 }
