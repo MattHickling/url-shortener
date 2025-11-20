@@ -7,5 +7,12 @@ if (!isset($_SESSION['email'])) {
 include '../config/bootstrap.php';
 include '../templates/header.php';
 
+use Src\Auth\User;
+use Src\Auth\AuthService;
+$email = $_SESSION['email'];
+$user = new User($conn);
+$currentUser = $user->getUsername($email);
+// print_r($currentUser);
+
 ?>
-<h2>Welcome to your Dashboard, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h2>
+<h2>Welcome <?php echo ucfirst($currentUser); ?>!</h2>

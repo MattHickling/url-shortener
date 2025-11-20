@@ -51,4 +51,14 @@ class User {
         $stmt->execute();
         $stmt->close();
     }
+
+    public function getUsername($email) {
+        $stmt = $this->conn->prepare("SELECT username FROM users WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $stmt->bind_result($username);
+        $stmt->fetch();
+        $stmt->close();
+        return $username;
+    }
 }
