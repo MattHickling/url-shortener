@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS `urls` (
     `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     `user_id` INT UNSIGNED,
     `original_url` TEXT NOT NULL,
-    `short_code` VARCHAR(10) NOT NULL UNIQUE,
+    ALTER TABLE 'db_url_shortener' ADD COLUMN 'short_code' VARCHAR(10) DEFAULT NULL UNIQUE;
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE SET NULL
 );
