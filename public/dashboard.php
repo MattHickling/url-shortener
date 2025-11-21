@@ -34,10 +34,6 @@ $userId = $userData['id'] ?? null;
 </form>
 </div>
 
-
-
-
-
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['original_url'])) {
@@ -45,23 +41,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (filter_var($originalUrl, FILTER_VALIDATE_URL)) {
             $result = $urlService->create($userId, $originalUrl);
-            echo '<p>' . htmlspecialchars($result['message']) . '</p>';
-            if (!empty($result['short_code'])) {
-                $result = $urlService->create($userId, $originalUrl);
-                if ($result['success']) {
-                    echo "<div class='h3'><class='text-success'>New URL:</class> <a href='http://localhost:8888/url-shortener/public/r.php?code=" . htmlspecialchars($result['short_code']) . "' target='_blank'>http://localhost:8888/url-shortener/public/r.php?code=" . htmlspecialchars($result['short_code']) . "</a></div>";
-                    
-                    //LIVE
-                    // $baseUrl = "https://matthewhickling.co.uk/"; 
-                    // $shortUrl = $baseUrl . "r.php?code=" . $result['short_code'];
-                    // echo "<div class='h3'>Short URL: <a href='$shortUrl' target='_blank'>$shortUrl</a></div>";
+
+            if (!empty($result['message']) || !empty($result['short_code'])) {
+                echo '<div class="d-flex flex-column justify-content-center align-items-center mt-5">';
+
+                if (!empty($result['message'])) {
+                    echo '<p class="display-6 text-success text-center mb-3">' . htmlspecialchars($result['message']) . '</p>';
                 }
+
+                // LOCAL OR LIVE
+                if (!empty($result['short_code'])) {
+                    $shortUrl = ($_ENV['APP_ENV'] == 'local')
+                        ? "http://localhost:8888/url-shortener/public/r.php?code=" . htmlspecialchars($result['short_code'])
+                        : "https://matthewhickling.co.uk/r.php?code=" . htmlspecialchars($result['short_code']);
+
+                    echo '<p class="h4 text-center"><a href="' . $shortUrl . '" target="_blank">' . $shortUrl . '</a></p>';
+                }
+
+                echo '</div>';
             }
+
         } else {
-            echo '<p>Invalid URL. Please enter a valid URL.</p>';
+            echo '<p class="text-center text-danger mt-3">Invalid URL. Please enter a valid URL.</p>';
         }
     }
 }
+
 ?>
 <script src="../assets/js/bootstrap.bundle.min.js"></script>
 
