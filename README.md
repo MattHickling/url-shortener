@@ -33,7 +33,7 @@ Complete setup instructions for the PHP URL Shortener application.
 ---
 
 ## 2. Clone the Repository
-git clone https://github.com/your-username/url-shortener.git
+git clone https://github.com/MattHickling/url-shortener.git
 cd url-shortener
 
 ## 3. Install Composer Dependencies
