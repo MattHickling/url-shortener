@@ -1,6 +1,10 @@
 <?php
 session_start();
 
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
 if (!isset($_SESSION['email'])) {
     header('Location: login.php');
     exit();
@@ -26,16 +30,24 @@ $userId = $userData['id'] ?? null;
 <h2>Welcome <?php echo ucfirst(htmlspecialchars($currentUser)); ?>!</h2>
 <div>
     <form method="POST" class="center-block">
-    <div>
-        What is the URL that you would like to shorten?: 
-    </div>
-    <input type="text" name="original_url" class="form-control mt-2 mb-4"  required>
-    <input type="submit" class="btn btn-primary" class="form-control"  value="Submit">
-</form>
+        <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+        <div>
+            What is the URL that you would like to shorten?: 
+        </div>
+        <input type="text" name="original_url" class="form-control mt-2 mb-4"  required>
+        <input type="submit" class="btn btn-primary form-control"  value="Submit">
+    </form>
 </div>
 
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+     if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+        echo '<p class="text-center text-danger mt-3">Invalid request. Please try again.</p>';
+        exit();
+    }
+    unset($_SESSION['csrf_token']);
+
     if (isset($_POST['original_url'])) {
         $originalUrl = trim($_POST['original_url']);
 
